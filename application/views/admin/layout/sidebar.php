@@ -13,7 +13,7 @@ $meta = $this->meta_model->get_meta();
 
     <span class="brand-text font-weight-light">
       <img src="<?php echo base_url('assets/img/logo/' . $meta->favicon); ?>" style="width:40px" alt="User Image">
-      Atran Airport</span>
+      <?php echo $meta->title; ?> </span>
   </a>
 
   <!-- Sidebar -->

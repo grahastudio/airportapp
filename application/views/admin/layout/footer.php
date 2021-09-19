@@ -1,9 +1,14 @@
+<?php
+$id = $this->session->userdata('id');
+$user = $this->user_model->user_detail($id);
+$meta = $this->meta_model->get_meta();
+?>
 </div>
 </section>
 </div>
 <!-- /.content-wrapper -->
 <footer class="main-footer">
-  <strong>Atran Airport</strong>
+  <strong><?php echo $meta->title; ?></strong>
   <div class="float-right d-none d-sm-inline-block">
     <b>App Version</b> 1.0.0
   </div>
