@@ -25,4 +25,26 @@ class Product_model extends CI_Model
     $query = $this->db->get();
     return $query->row();
   }
+  //Total Berita Main Page
+  public function total_row()
+  {
+    $this->db->select('*');
+    $this->db->from('product');
+    $this->db->order_by('id', 'DESC');
+    $query = $this->db->get();
+    return $query->result();
+  }
+  public function product_detail($id)
+  {
+    $this->db->select('*');
+    $this->db->from('product');
+    $this->db->where('id', $id);
+    $query = $this->db->get();
+    return $query->row();
+  }
+  public function update($data)
+  {
+    $this->db->where('id', $data['id']);
+    $this->db->update('product', $data);
+  }
 }

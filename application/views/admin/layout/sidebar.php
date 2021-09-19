@@ -32,8 +32,6 @@ $meta = $this->meta_model->get_meta();
             </p>
           </a>
         </li>
-
-
         <li class="nav-item">
           <a href="<?php echo base_url(); ?>admin/transaksi" class="nav-link">
             <i class="nav-icon fas fa-receipt"></i>
@@ -56,6 +54,12 @@ $meta = $this->meta_model->get_meta();
               <a href="<?php echo base_url(); ?>admin/bank" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Bank</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="<?php echo base_url(); ?>admin/product" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Product</p>
               </a>
             </li>
             <li class="nav-item">
