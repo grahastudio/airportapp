@@ -8,14 +8,11 @@ class Auth extends CI_Controller
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->model('pengaturan_model');
+		$this->load->model('user_model');
 	}
 
 	public function index()
 	{
-		if ($this->session->userdata('id')) {
-			redirect('auth');
-		}
-
 		$this->form_validation->set_rules(
 			'email',
 			'Email',
