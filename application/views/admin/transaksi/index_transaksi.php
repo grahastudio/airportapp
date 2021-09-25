@@ -71,7 +71,7 @@ echo validation_errors('<div class="alert alert-warning">', '</div>');
                     <td>Rp. <?php echo number_format($transaksi->total_price, 0, ",", "."); ?></td>
                     <!-- <td><img class="img-fluid" src="<?php echo base_url('assets/img/barcode/' . $transaksi->barcode); ?>"></td> -->
                     <td>
-                        <a href="#" class="btn btn-success btn-sm">
+                        <a href="<?php echo base_url('admin/transaksi/detail/' . $transaksi->id); ?>" class="btn btn-success btn-sm">
                             <i class="fa fa-eye"></i> Detail
                         </a>
                         <a href="#" class="btn btn-danger btn-sm">

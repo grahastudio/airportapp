@@ -257,69 +257,19 @@ class transaksi extends CI_Controller
   }
 
 
-  public function create()
-  {
-    $provinsi       = $this->main_model->getProvinsi();
-    //Validasi
-    $this->form_validation->set_rules(
-      'user_id',
-      'User ID',
-      'required',
-      array(
-        'required'                        => '%s Harus Diisi'
-      )
-    );
-    if ($this->form_validation->run() === FALSE) {
-      $data = [
-        'title'                           => 'Transaksi',
-        'provinsi'                        => $provinsi,
-        'content'                         => 'admin/transaksi/create_transaksi'
-      ];
-      $this->load->view('admin/layout/wrapp', $data, FALSE);
-    } else {
-      $data  = [
-        'user_id'                         => $this->input->post('user_id'),
-        'provinsi_id'                    => $this->input->post('provinsi_id'),
-        'kota_id'                       => $this->input->post('kota_id'),
-        'kecamatan_id'                  => $this->input->post('kecamatan_id'),
-        'date_created'                    => date('Y-m-d H:i:s')
-      ];
-      $this->transaksi_model->create($data);
-      $this->session->set_flashdata('message', 'Data telah ditambahkan');
-      redirect(base_url('admin/dashboard'), 'refresh');
-    }
-  }
   public function detail($id)
   {
     $transaksi = $this->transaksi_model->detail($id);
-    $lacak = $this->lacak_model->get_detail_lacak($id);
     // var_dump($transaksi);
     // die;
     $data = [
       'title'                 => 'Detail Transaksi',
       'transaksi'             => $transaksi,
-      'lacak'                 => $lacak,
       'content'               => 'admin/transaksi/detail'
     ];
     $this->load->view('admin/layout/wrapp', $data, FALSE);
   }
-  // Lacak
-  public function lacak($id)
-  {
-    $transaksi = $this->transaksi_model->detail($id);
-    $lacak = $this->lacak_model->get_detail_lacak($id);
-    // var_dump($transaksi);
-    // die;
-    $data = [
-      'title'         => 'Pelacakan',
-      'deskripsi'     => 'Halaman Pelacakan',
-      'keywords'      => '',
-      'transaksi'     => $transaksi,
-      'lacak'         => $lacak,
-      'content'       => 'admin/transaksi/lacak_transaksi'
-    ];
-    $this->load->view('admin/layout/wrapp', $data, FALSE);
-  }
+
   //delete
   public function delete($id)
   {
