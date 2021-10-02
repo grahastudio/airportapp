@@ -113,13 +113,10 @@ if ($this->session->flashdata('message')) {
 
             <div class="col-12 mx-auto my-3">
                 <h6>Silahkan Unggah Foto Bukti Transfer</h6>
-                <div class="custom-file">
-                    <input type='file' class="custom-file-input" id="customFile" name="foto_struk" required>
-                    <label class="custom-file-label" for="customFile">Ambil Foto</label>
-                </div>
 
-                <br>
-                <img class="img-fluid mt-4" id="gambar" src="#" alt="Ambil Foto" OnError=" $(this).hide();" />
+                <input type='file' name="foto_struk" required>
+
+
                 <div class="invalid-feedback">Silahkan Masukan Foto Stuk transfer.</div>
             </div>
 
@@ -133,23 +130,3 @@ if ($this->session->flashdata('message')) {
 
     </div>
 </div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script type="text/javascript">
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function(e) {
-                $('#gambar').attr('src', e.target.result);
-            }
-
-            reader.readAsDataURL(input.files[0]); // convert to base64 string
-        }
-    }
-
-    $("#customFile").change(function() {
-        $('#gambar').show();
-        readURL(this);
-    });
-</script>
