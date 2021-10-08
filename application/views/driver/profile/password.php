@@ -12,7 +12,7 @@
     <div class="col-md-4 mx-auto">
         <div class="card">
             <?php
-            echo form_open_multipart('kurir/profile/password');
+            echo form_open_multipart('driver/profile/password');
             ?>
             <div class="card-body">
 

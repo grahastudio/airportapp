@@ -9,6 +9,8 @@ class Driver extends CI_Controller
         $this->load->library('pagination');
         $this->load->model('user_model');
         $this->load->model('main_model');
+        $this->load->model('saldo_model');
+        $this->load->model('topup_model');
     }
     public function index()
     {
@@ -120,13 +122,45 @@ class Driver extends CI_Controller
     public function detail($id)
     {
 
-        $main_agen = $this->user_model->detail($id);
+        $driver = $this->user_model->detail($id);
         $data = [
             'title'                 => 'Detail Driver',
-            'main_agen'             => $main_agen,
+            'driver'             => $driver,
             'content'               => 'admin/driver/detail'
         ];
         $this->load->view('admin/layout/wrapp', $data, FALSE);
+    }
+    // Update Password
+    public function update_password($id)
+    {
+        $user = $this->user_model->detail($id);
+        $this->form_validation->set_rules(
+            'password1',
+            'Password',
+            'required|trim|min_length[3]|matches[password2]',
+            [
+                'matches'     => 'Password tidak sama',
+                'min_length'   => 'Password Min 3 karakter'
+            ]
+        );
+        $this->form_validation->set_rules('password2', 'Ulangi Password', 'required|trim|matches[password1]');
+
+        if ($this->form_validation->run() == false) {
+            $data = [
+                'title'         => 'Update Password',
+                'user'          => $user,
+                'content'       => 'admin/driver/update_password'
+            ];
+            $this->load->view('admin/layout/wrapp', $data, FALSE);
+        } else {
+            $data = [
+                'id'                => $id,
+                'password'          => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
+            ];
+            $this->user_model->update($data);
+            $this->session->set_flashdata('message', 'Data Berhasil di Update');
+            redirect('admin/driver');
+        }
     }
     // Activated
     public function activated($id)
@@ -159,21 +193,20 @@ class Driver extends CI_Controller
     // Saldo Manual
     public function saldo($id)
     {
-
-        $counter = $this->user_model->detail($id);
+        $driver = $this->user_model->detail($id);
 
         $data = [
-            'title'                 => 'Saldo Counter',
-            'counter'               => $counter,
-            'content'               => 'admin/counter/saldo'
+            'title'                 => 'Saldo Driver',
+            'driver'               => $driver,
+            'content'               => 'admin/driver/saldo'
         ];
         $this->load->view('admin/layout/wrapp', $data, FALSE);
     }
     public function tambah_saldo($id)
     {
         $user_type = $this->session->userdata('id');
-        $counter = $this->user_model->detail($id);
-        $counter_id = $counter->id;
+        $driver = $this->user_model->detail($id);
+        $driver_id = $driver->id;
 
         $this->form_validation->set_rules(
             'keterangan',
@@ -185,9 +218,9 @@ class Driver extends CI_Controller
         );
         if ($this->form_validation->run() === FALSE) {
             $data = [
-                'title'                 => 'Saldo Counter',
-                'counter'               => $counter,
-                'content'               => 'admin/counter/saldo'
+                'title'                 => 'Saldo Driver',
+                'driver'               => $driver,
+                'content'               => 'admin/driver/saldo'
             ];
             $this->load->view('admin/layout/wrapp', $data, FALSE);
         } else {
@@ -198,7 +231,7 @@ class Driver extends CI_Controller
 
             // $pemasukan = $this->input->post('pemasukan');
             // $total_saldo = $counter->deposit_counter + $pemasukan;
-            $total_saldo = (int)$counter->deposit_counter + (int)$fix_pemasukan;
+            $total_saldo = (int)$driver->saldo_driver + (int)$fix_pemasukan;
 
             $code_topup = date('dmY') . strtoupper(random_string('alnum', 5));
             $keterangan = $this->input->post('keterangan');
@@ -208,7 +241,6 @@ class Driver extends CI_Controller
                 'pemasukan'                 => $fix_pemasukan,
                 'keterangan'                => $keterangan . ' - ' . $code_topup,
                 'transaksi'                 => 0,
-                'asuransi'                  => 0,
                 'pengeluaran'               => 0,
                 'total_saldo'               => $total_saldo,
                 'user_type'                 => $user_type,
@@ -216,9 +248,9 @@ class Driver extends CI_Controller
             ];
             $this->saldo_model->create($data);
             $this->session->set_flashdata('message', 'Data telah ditambahkan');
-            $this->update_saldo_counter($total_saldo, $counter_id);
+            $this->update_saldo_driver($total_saldo, $driver_id);
             $this->topup_manual($id, $keterangan, $code_topup, $fix_pemasukan);
-            redirect(base_url('admin/counter'), 'refresh');
+            redirect(base_url('admin/driver'), 'refresh');
         }
     }
     public function topup_manual($id, $keterangan, $code_topup, $fix_pemasukan)
@@ -259,7 +291,7 @@ class Driver extends CI_Controller
             $data = [
                 'title'                 => 'Saldo Counter',
                 'counter'               => $counter,
-                'content'               => 'admin/counter/saldo'
+                'content'               => 'admin/driver/saldo'
             ];
             $this->load->view('admin/layout/wrapp', $data, FALSE);
         } else {
@@ -283,17 +315,16 @@ class Driver extends CI_Controller
             ];
             $this->saldo_model->create($data);
             $this->session->set_flashdata('message', 'Data telah ditambahkan');
-            $this->update_saldo_counter($total_saldo, $counter_id);
+            $this->update_saldo_driver($total_saldo, $counter_id);
             redirect(base_url('admin/counter'), 'refresh');
         }
     }
 
-    public function update_saldo_counter($total_saldo, $counter_id)
+    public function update_saldo_driver($total_saldo, $driver_id)
     {
         $data = [
-            'id'                => $counter_id,
-            'deposit_counter'   => $total_saldo,
-
+            'id'                => $driver_id,
+            'saldo_driver'      => $total_saldo,
         ];
         $this->user_model->update($data);
     }

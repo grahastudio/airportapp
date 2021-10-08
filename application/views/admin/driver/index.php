@@ -38,10 +38,10 @@
                     <th>No</th>
                     <th>ID Driver</th>
                     <th>Nama</th>
-                    <th>Role</th>
+                    <th>Saldo</th>
                     <th>Status</th>
                     <th>Locked</th>
-                    <th width="10%">Action</th>
+                    <th width="15%">Action</th>
                 </tr>
             </thead>
             <?php $no = 1;
@@ -50,7 +50,7 @@
                     <td><?php echo $no; ?></td>
                     <td><?php echo $data->user_code; ?></td>
                     <td><?php echo $data->name; ?></td>
-                    <td><?php echo $data->role; ?></td>
+                    <td>Rp. <?php echo number_format($data->saldo_driver, 0, ",", "."); ?></td>
                     <td>
                         <?php if ($data->is_active == 1) : ?>
                             <span class="badge badge-success">Aktif</span>
@@ -66,6 +66,7 @@
                         <?php endif; ?>
                     </td>
                     <td>
+                        <a href="<?php echo base_url('admin/driver/saldo/' . $data->id); ?>" class="btn btn-info btn-sm"><i class="fa fa-coins"></i> </a>
                         <?php if ($data->is_locked == 0) : ?>
                             <a class="btn btn-success btn-sm" href="<?php echo base_url('admin/driver/activated/' . $data->id); ?>"><i class="fas fa-check"></i></a>
                         <?php endif; ?>
@@ -76,7 +77,7 @@
                             <a class="btn btn-danger btn-sm" href="<?php echo base_url('admin/driver/banned/' . $data->id); ?>"><i class="fas fa-times"></i></a>
 
                         <?php endif; ?>
-                        <a href="<?php echo base_url('admin/driver/detail/' . $data->id); ?>" class="btn btn-info btn-sm" target="blank"> <i class="fas fa-external-link-alt"></i> Lihat</a>
+                        <a href="<?php echo base_url('admin/driver/detail/' . $data->id); ?>" class="btn btn-info btn-sm"> <i class="fas fa-external-link-alt"></i> Lihat</a>
                     </td>
                 </tr>
 
