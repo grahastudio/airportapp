@@ -253,6 +253,56 @@ class Driver extends CI_Controller
             redirect(base_url('admin/driver'), 'refresh');
         }
     }
+    public function potong_saldo($id)
+    {
+
+        $user_type = $this->session->userdata('id');
+        $driver = $this->user_model->detail($id);
+        $driver_id = $driver->id;
+
+        $this->form_validation->set_rules(
+            'keterangan',
+            'Keterangan',
+            'required',
+            array(
+                'required'                        => '%s Harus Diisi',
+            )
+        );
+        if ($this->form_validation->run() === FALSE) {
+            $data = [
+                'title'                 => 'Saldo Counter',
+                'driver'                => $driver,
+                'content'               => 'admin/driver/saldo'
+            ];
+            $this->load->view('admin/layout/wrapp', $data, FALSE);
+        } else {
+
+            $pengeluaran               = $this->input->post('pengeluaran');
+            $fix_pengeluaran          = preg_replace('/\D/', '', $pengeluaran);
+
+            // $pengeluaran = $this->input->post('pengeluaran');
+            $total_saldo = (int)$driver->saldo_driver - (int)$fix_pengeluaran;
+
+            $code_topup = date('dmY') . strtoupper(random_string('alnum', 5));
+            $keterangan = $this->input->post('keterangan');
+
+            $data  = [
+                'user_id'                   => $id,
+                'pemasukan'                 => 0,
+                'keterangan'                => $this->input->post('keterangan'),
+                'transaksi'                 => 0,
+                'pengeluaran'               => $fix_pengeluaran,
+                'total_saldo'               => $total_saldo,
+                'user_type'                 => $user_type,
+                'date_created'              => date('Y-m-d H:i:s')
+            ];
+            $this->saldo_model->create($data);
+            $this->session->set_flashdata('message', 'Data telah ditambahkan');
+            $this->potong_manual($id, $keterangan, $code_topup, $fix_pengeluaran);
+            $this->update_saldo_driver($total_saldo, $driver_id);
+            redirect(base_url('admin/driver'), 'refresh');
+        }
+    }
     public function topup_manual($id, $keterangan, $code_topup, $fix_pemasukan)
     {
         $user_id = $this->session->userdata('id');
@@ -271,54 +321,26 @@ class Driver extends CI_Controller
         ];
         $this->topup_model->create($data);
     }
-
-    public function potong_saldo($id)
+    public function potong_manual($id, $keterangan, $code_topup, $fix_pengeluaran)
     {
+        $user_id = $this->session->userdata('id');
+        $user = $this->user_model->user_detail($user_id);
 
-        $user_type = $this->session->userdata('id');
-        $counter = $this->user_model->detail($id);
-        $counter_id = $counter->id;
-
-        $this->form_validation->set_rules(
-            'keterangan',
-            'Keterangan',
-            'required',
-            array(
-                'required'                        => '%s Harus Diisi',
-            )
-        );
-        if ($this->form_validation->run() === FALSE) {
-            $data = [
-                'title'                 => 'Saldo Counter',
-                'counter'               => $counter,
-                'content'               => 'admin/driver/saldo'
-            ];
-            $this->load->view('admin/layout/wrapp', $data, FALSE);
-        } else {
-
-            $pengeluaran               = $this->input->post('pengeluaran');
-            $fix_pengeluaran          = preg_replace('/\D/', '', $pengeluaran);
-
-            // $pengeluaran = $this->input->post('pengeluaran');
-            $total_saldo = (int)$counter->deposit_counter - (int)$fix_pengeluaran;
-
-            $data  = [
-                'user_id'                   => $id,
-                'pemasukan'                 => 0,
-                'keterangan'                => $this->input->post('keterangan'),
-                'transaksi'                 => 0,
-                'asuransi'                  => 0,
-                'pengeluaran'               => $fix_pengeluaran,
-                'total_saldo'               => $total_saldo,
-                'user_type'                 => $user_type,
-                'date_created'              => date('Y-m-d H:i:s')
-            ];
-            $this->saldo_model->create($data);
-            $this->session->set_flashdata('message', 'Data telah ditambahkan');
-            $this->update_saldo_driver($total_saldo, $counter_id);
-            redirect(base_url('admin/counter'), 'refresh');
-        }
+        $data  = [
+            'user_id'                   => $id,
+            'code_topup'                => $code_topup,
+            'nominal'                   => $fix_pengeluaran,
+            'keterangan'                => $keterangan,
+            'status_bayar'              => 'Success',
+            'topup_reason'              => 'Potong Manual by ' . $user->name,
+            'user_proccess'             => $this->session->userdata('id'),
+            'status_read'               => 0,
+            'date_created'              => date('Y-m-d H:i:s')
+        ];
+        $this->topup_model->create($data);
     }
+
+
 
     public function update_saldo_driver($total_saldo, $driver_id)
     {
